@@ -4,10 +4,14 @@ from rest_framework import status
 from rest_framework.viewsets import ModelViewSet
 from products.serializers import ProductSerializers, CategorySerializers, ReviewsSerializer
 from products.models import Product, Category, Reviews
+from django_filters.rest_framework import DjangoFilterBackend
+from products.filters import ProductFilter
 
 class ProductViewSet(ModelViewSet):
     queryset = Product.objects.select_related("category").all()
     serializer_class = ProductSerializers
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = ProductFilter
 
     def destroy(self, request, *args, **kwargs):
         product = self.get_object()
@@ -15,9 +19,11 @@ class ProductViewSet(ModelViewSet):
             return Response({'message': 'product with stock more then 10 could not be deleted'})
         self.perform_destroy(product)
         return Response(status=status.HTTP_204_NO_CONTENT)
+    
 class CategoryViewSet(ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializers
+
 class ReviewsViewSet(ModelViewSet):
     serializer_class = ReviewsSerializer
 
