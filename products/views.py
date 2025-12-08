@@ -8,7 +8,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 from products.pagination import Default_Pagination
 from products.filters import ProductFilter
-
+from api.permissions import IsAdminOrReadOnly
 
 class ProductViewSet(ModelViewSet):
     queryset = Product.objects.select_related("category").all()
@@ -18,6 +18,7 @@ class ProductViewSet(ModelViewSet):
     pagination_class = Default_Pagination
     search_fields = ['name', 'description']
     ordering_fields = ['price', 'name', 'updated_at']
+    permission_classes = [IsAdminOrReadOnly]
     def destroy(self, request, *args, **kwargs):
         product = self.get_object()
         if product.stock >10:
@@ -28,6 +29,7 @@ class ProductViewSet(ModelViewSet):
 class CategoryViewSet(ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializers
+    permission_classes = [IsAdminOrReadOnly]
 
 class ReviewsViewSet(ModelViewSet):
     serializer_class = ReviewsSerializer
