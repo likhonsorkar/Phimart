@@ -11,9 +11,11 @@ class ProductSerializers(serializers.ModelSerializer):
         model = Product
         fields = ["id", "name", "description", "unit_price", "stock", "image", "category", "created_at", "updated_at"]
 class ReviewsSerializer(serializers.ModelSerializer):
+    # user_email = serializers.CharField(source='user.email')
     class Meta:
         model = Reviews
-        fields = ["id", "name", "description"]
+        fields = ["id", "user","product", "rating", "comment"]
+        read_only_fields = ['user', 'product']
     def create(self, validated_data):
         product_id = self.context['product_id']
         return Reviews.objects.create(product_id = product_id, **validated_data)

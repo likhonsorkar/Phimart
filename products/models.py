@@ -1,4 +1,6 @@
 from django.db import models
+from users.models import User
+from django.core.validators import MinValueValidator, MaxValueValidator
 # Create your models here.
 class Category(models.Model):
     name = models.CharField(max_length=255)
@@ -24,7 +26,9 @@ class Reviews(models.Model):
     product = models.ForeignKey(
         Product, on_delete=models.CASCADE
     )
-    name = models.CharField(max_length=255)
-    description = models.TextField()
-    date = models.DateField(auto_now_add=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reviews')
+    rating = models.PositiveIntegerField(validators=[MinValueValidator(1),MaxValueValidator(5)])
+    comment = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     

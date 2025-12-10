@@ -3,10 +3,14 @@ from rest_framework.viewsets import GenericViewSet, ModelViewSet
 from rest_framework.mixins import CreateModelMixin, RetrieveModelMixin, DestroyModelMixin
 from orders.models import Cart, CartItem
 from orders.serializers import Cartserializer, CartItemSerializer, AddCartItemSerializers, UpdateCartItemSerializers
+from rest_framework.permissions import IsAuthenticated
 # Create your views here.
 class Cartviewset(CreateModelMixin, RetrieveModelMixin, DestroyModelMixin, GenericViewSet):
-    queryset = Cart.objects.all()
     serializer_class = Cartserializer
+    permission_classes = [IsAuthenticated]
+    def get_queryset(self):
+        return Cart.objects.filter(user=self.request.user)
+    
 
 class CartItemsViewSet(ModelViewSet):
     http_method_names = ['get', 'post', 'patch', 'delete']

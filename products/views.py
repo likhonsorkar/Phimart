@@ -9,6 +9,7 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 from products.pagination import Default_Pagination
 from products.filters import ProductFilter
 from api.permissions import IsAdminOrReadOnly
+from products.permissions import IsReviewAuthourOrReadOnly
 
 class ProductViewSet(ModelViewSet):
     queryset = Product.objects.select_related("category").all()
@@ -33,7 +34,11 @@ class CategoryViewSet(ModelViewSet):
 
 class ReviewsViewSet(ModelViewSet):
     serializer_class = ReviewsSerializer
+    permission_classes = [IsReviewAuthourOrReadOnly]
 
+    def perform_create(self, serializer):
+        serializer.save(
+            user=self.request.user,)
     def get_queryset(self):
         return Reviews.objects.filter(product_id = self.kwargs['product_pk'])
 
